@@ -645,7 +645,7 @@ export default function App() {
         </p>
       </footer>
 
-      {/* Lightbox - Nueva Implementación Robusta */}
+      {/* Lightbox - Edición Ultra-Táctil para Móviles */}
       <AnimatePresence>
         {selectedImg && (
           <motion.div
@@ -657,17 +657,25 @@ export default function App() {
             {/* Fondo que cierra al hacer clic */}
             <div className="absolute inset-0 z-0" onClick={() => setSelectedImg(null)} />
 
-            {/* Controles */}
+            {/* Controles Superiores */}
             <div className="absolute top-6 right-6 z-210 flex gap-4">
-              <button
-                onClick={() => setZoom(prev => Math.min(prev + 0.5, 5))}
-                className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center backdrop-blur-md"
-              >
-                <Database size={20} className="rotate-45" /> {/* Placeholder icon for plus */}
-              </button>
+              <div className="hidden sm:flex gap-2">
+                <button
+                  onClick={() => setZoom(prev => Math.min(prev + 0.5, 5))}
+                  className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/5"
+                >
+                  <ChevronRight size={20} className="-rotate-90" />
+                </button>
+                <button
+                  onClick={() => setZoom(prev => Math.max(prev - 0.5, 0.5))}
+                  className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/5"
+                >
+                  <ChevronRight size={20} className="rotate-90" />
+                </button>
+              </div>
               <button
                 onClick={() => setSelectedImg(null)}
-                className="w-12 h-12 rounded-full bg-white/10 hover:bg-red-500 flex items-center justify-center transition-colors backdrop-blur-md"
+                className="w-12 h-12 rounded-full bg-white/10 hover:bg-red-500/80 flex items-center justify-center transition-colors backdrop-blur-md border border-white/10"
               >
                 <X size={24} />
               </button>
@@ -677,7 +685,7 @@ export default function App() {
               {selectedImg.title} <span className="text-amber-500 ml-4">{Math.round(zoom * 100)}%</span>
             </div>
 
-            {/* Canvas de Imagen */}
+            {/* Canvas de Imagen con Soporte Táctil */}
             <div
               className="relative w-full h-full flex items-center justify-center cursor-move"
               onWheel={(e) => {
@@ -688,11 +696,48 @@ export default function App() {
               onMouseUp={() => setIsDragging(false)}
               onMouseLeave={() => setIsDragging(false)}
               onMouseMove={(e) => {
-                if (!isDragging || zoom <= 1.1) return;
+                if (!isDragging || zoom <= 1.05) return;
                 setPan(prev => ({
                   x: prev.x + e.movementX,
                   y: prev.y + e.movementY
                 }));
+              }}
+              // Soporte para gestos móviles (Pinch & Pan)
+              onTouchStart={(e) => {
+                setIsDragging(true);
+                if (e.touches.length === 2) {
+                  // Iniciando pinch-to-zoom
+                  const dist = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                  );
+                  (e.currentTarget as any)._lastDist = dist;
+                } else if (e.touches.length === 1) {
+                  (e.currentTarget as any)._lastTouch = { x: e.touches[0].pageX, y: e.touches[0].pageY };
+                }
+              }}
+              onTouchEnd={() => {
+                setIsDragging(false);
+              }}
+              onTouchMove={(e) => {
+                if (e.touches.length === 2) {
+                  const dist = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                  );
+                  const lastDist = (e.currentTarget as any)._lastDist || dist;
+                  const delta = (dist - lastDist) * 0.01;
+                  setZoom(prev => Math.min(Math.max(prev + delta, 0.5), 5));
+                  (e.currentTarget as any)._lastDist = dist;
+                } else if (e.touches.length === 1 && zoom > 1.05) {
+                  const touch = { x: e.touches[0].pageX, y: e.touches[0].pageY };
+                  const lastTouch = (e.currentTarget as any)._lastTouch || touch;
+                  setPan(prev => ({
+                    x: prev.x + (touch.x - lastTouch.x),
+                    y: prev.y + (touch.y - lastTouch.y)
+                  }));
+                  (e.currentTarget as any)._lastTouch = touch;
+                }
               }}
             >
               <motion.div
@@ -707,13 +752,14 @@ export default function App() {
                 <img
                   src={selectedImg.src}
                   alt={selectedImg.title}
-                  className="max-h-[80vh] w-auto rounded-lg shadow-[0_0_100px_rgba(0,0,0,0.8)]"
+                  className="max-h-[70vh] sm:max-h-[85vh] w-auto rounded-lg shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/5"
                 />
               </motion.div>
             </div>
 
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-zinc-500 text-[10px] uppercase tracking-widest pointer-events-none">
-              Usa el scroll y arrastra para explorar el detalle
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-zinc-500 text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.4em] pointer-events-none text-center px-6">
+              <span className="sm:hidden">Pellizca para zoom y arrastra para explorar</span>
+              <span className="hidden sm:inline">Usa el scroll y arrastra para explorar el detalle</span>
             </div>
           </motion.div>
         )}
