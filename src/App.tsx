@@ -357,57 +357,8 @@ export default function App() {
         ))}
       </div>
 
-      {/* Navigation - Responsive Adaptada (Prioridad Absoluta) */}
-      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] sm:w-auto sm:min-w-[400px] z-999 px-6 sm:px-10 py-3 flex justify-center items-center backdrop-blur-xl bg-zinc-200/90 border border-zinc-300 shadow-2xl rounded-full">
-        <div className="flex gap-4 sm:gap-10 text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-black">
-          <button onClick={() => { setSection('home'); setSelectedImg(null); }} className="hover:opacity-60 transition-opacity">Studio</button>
-          <button onClick={() => { setSection('catalogue'); setSelectedImg(null); }} className="hover:opacity-60 transition-opacity">Catálogo</button>
-          <button onClick={() => { setSection('booking'); setSelectedImg(null); }} className="hover:opacity-60 transition-opacity">Reserva</button>
-          <button onClick={() => setShowAdmin(true)} className="hover:text-amber-600 transition-all flex items-center gap-2">
-            <Database size={14} /> <span className="hidden xs:inline">Gestión</span>
-          </button>
-        </div>
-      </nav>
-
-      {/* Desktop Logo (Fixed Corner) - MAX IMPACT */}
-      <div className="hidden sm:block fixed top-4 left-6 z-100 group">
-        <div className="absolute inset-0 bg-yellow-400/20 blur-[60px] rounded-full group-hover:bg-yellow-400/40 transition-all duration-1000" />
-        <button onClick={() => { setSection('home'); setSelectedImg(null); }} className="relative hover:scale-110 transition-transform duration-500">
-          <img
-            src="/assets/logo.png"
-            alt="INKORA"
-            className="h-32 lg:h-56 w-auto brightness-150 contrast-125"
-            style={{ 
-              filter: 'drop-shadow(0 0 15px rgba(255,255,0,0.8)) drop-shadow(0 0 30px rgba(255,255,0,0.4))' 
-            }}
-          />
-        </button>
-      </div>
-
       {/* Header Space for Nav */}
       <div className="h-28 sm:h-10" />
-
-      {/* Mobile Logo - Dynamic Impact (Original Design Preserved) */}
-      <div className={cn(
-        "sm:hidden flex justify-center relative z-20 px-6 transition-all duration-500",
-        section === 'home' ? "h-48 mb-6 mt-16" : "h-24 mb-2 mt-16"
-      )}>
-        <motion.button 
-          onClick={() => { setSection('home'); setSelectedImg(null); }} 
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          <img
-            src="/assets/logo.png"
-            alt="INKORA"
-            className="h-full w-auto object-contain brightness-200 contrast-150 saturate-150 transition-all duration-500"
-            style={{ 
-                filter: 'drop-shadow(0 0 15px rgba(255,255,0,0.9))' 
-            }}
-            loading="eager"
-          />
-        </motion.button>
-      </div>
 
       <main className="relative z-10 px-6 pt-10 sm:pt-40 pb-32">
         <AnimatePresence mode="wait">
@@ -461,7 +412,7 @@ export default function App() {
                   <div className="relative group mx-auto max-w-md lg:max-w-none">
                     <div className="absolute inset-0 bg-amber-500/10 blur-[100px] rounded-full group-hover:bg-amber-500/20 transition-all duration-1000" />
                     <img
-                      src="/assets/producto/mujer/brazo_leon.png"
+                      src="/assets/producto/mujer/brazo_leon.png?v=studio"
                       id="hero-main-image"
                       alt="Inkora Studio Hero"
                       className="relative w-full aspect-4/5 object-cover rounded-[3rem] grayscale hover:grayscale-0 transition-all duration-1000 border border-white/5 shadow-2xl"
@@ -522,7 +473,6 @@ export default function App() {
                     { src: '/assets/producto/mujer/pierna_buho.png', title: 'Owl Spirit' },
                   ]).map((img, i) => (
                     <motion.div
-                      layout
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       key={`gallery-${catFilter}-${i}`}
@@ -534,7 +484,7 @@ export default function App() {
                       className="relative aspect-4/5 rounded-4xl overflow-hidden group border border-white/5 cursor-zoom-in"
                     >
                       <div className="absolute inset-0 bg-linear-to-tr from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10" />
-                      <img src={img.src} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0" alt={img.title} />
+                      <img src={`${img.src}?v=gallery`} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0" alt={img.title} />
                       <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-linear-to-r from-transparent via-white/10 to-transparent pointer-events-none z-20" />
                       <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-8 z-30">
                         <div>
@@ -773,6 +723,43 @@ export default function App() {
           Desarrollado por <a href="https://artechlabs.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:text-white transition-colors">ARTECH LABS</a>
         </p>
       </footer>
+
+      {/* REUBICACIÓN ESTRATÉGICA DE CONTROLES (TACTOR PRIORITY) */}
+      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] sm:w-auto sm:min-w-[400px] z-[9999] px-6 sm:px-10 py-3 flex justify-center items-center backdrop-blur-xl bg-zinc-200/90 border border-zinc-300 shadow-2xl rounded-full">
+        <div className="flex gap-4 sm:gap-10 text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-black">
+          <button onClick={() => { setSection('home'); setSelectedImg(null); }} className="hover:opacity-60 transition-opacity">Studio</button>
+          <button onClick={() => { setSection('catalogue'); setSelectedImg(null); }} className="hover:opacity-60 transition-opacity">Catálogo</button>
+          <button onClick={() => { setSection('booking'); setSelectedImg(null); }} className="hover:opacity-60 transition-opacity">Reserva</button>
+          <button onClick={() => setShowAdmin(true)} className="hover:text-amber-600 transition-all flex items-center gap-2">
+            <Database size={14} /> <span className="hidden xs:inline">Gestión</span>
+          </button>
+        </div>
+      </nav>
+
+      {/* Desktop Logo - Redundant Layer */}
+      <div className="hidden sm:block fixed top-4 left-6 z-[9998] group">
+        <div className="absolute inset-0 bg-yellow-400/20 blur-[60px] rounded-full group-hover:bg-yellow-400/40 transition-all duration-1000" />
+        <button onClick={() => { setSection('home'); setSelectedImg(null); }} className="relative hover:scale-110 transition-transform duration-500">
+          <img src="/assets/logo.png" alt="INKORA" className="h-32 lg:h-56 w-auto brightness-150 contrast-125" style={{ filter: 'drop-shadow(0 0 15px rgba(255,255,0,0.8))' }} />
+        </button>
+      </div>
+
+      {/* Mobile Logo - Absolute Priority Layer */}
+      <div className={cn(
+        "sm:hidden fixed top-24 left-0 w-full flex justify-center z-[9997] px-6 pointer-events-none transition-all duration-500",
+        section === 'home' ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-50 -translate-y-20"
+      )}>
+        <button 
+          onClick={() => { setSection('home'); setSelectedImg(null); }} 
+          className="pointer-events-auto"
+        >
+          <img
+            src="/assets/logo.png"
+            alt="INKORA"
+            className="h-44 w-auto object-contain brightness-200 contrast-150 saturate-150 drop-shadow-[0_0_15px_rgba(255,255,0,0.9)]"
+          />
+        </button>
+      </div>
 
     </div>
   );
