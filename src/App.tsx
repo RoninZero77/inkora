@@ -70,7 +70,7 @@ const Lightbox = ({ selectedImg, setSelectedImg }: { selectedImg: any, setSelect
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.2 } }}
-      className="fixed inset-0 z-[10001] bg-black/98 backdrop-blur-3xl flex items-center justify-center overflow-hidden touch-none"
+      className="fixed inset-0 z-10001 bg-black/98 backdrop-blur-3xl flex items-center justify-center overflow-hidden touch-none"
     >
       <div className="absolute inset-0 z-0" onClick={closeLightbox} />
 
