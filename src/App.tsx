@@ -182,13 +182,13 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Massive Old School Tattoo Rain - ULTRA OPTIMIZED 2.0 */}
+      {/* Massive Old School Tattoo Rain - ULTRA OPTIMIZED 3.0 */}
       <div className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none overflow-hidden opacity-[0.2] bg-[#050505]">
-        {[...Array(30)].map((_, i) => {
-          const size = Math.random() * 25 + 15;
-          const duration = Math.random() * 6 + 4;
-          const delay = Math.random() * -15;
-          const leftPos = (i * (100 / 30)); 
+        {[...Array(20)].map((_, i) => {
+          const size = Math.random() * 30 + 20;
+          const duration = Math.random() * 5 + 3;
+          const delay = Math.random() * -10;
+          const leftPos = (i * (100 / 20)); 
           const icons = [<Skull size={size} />, <Sword size={size} />, <Anchor size={size} />, <Droplet size={size} />, <Zap size={size} />];
           const icon = icons[i % icons.length];
           
@@ -206,35 +206,36 @@ export default function App() {
                 delay,
                 ease: "linear" 
               }}
-              className="absolute text-zinc-500/50 flex flex-col items-center will-change-transform"
-              style={{ left: `${leftPos}%` }}
+              className="absolute text-zinc-500/40 flex flex-col items-center"
+              style={{ left: `${leftPos}%`, willChange: 'transform' }}
             >
               {icon}
-              <div className="w-px h-20 bg-linear-to-b from-zinc-700/30 to-transparent mt-1" />
+              <div className="w-px h-16 bg-linear-to-b from-zinc-700/20 to-transparent mt-1" />
             </motion.div>
           );
         })}
         
-        {/* Deep Ink Splashes - Light Optimization */}
-        {[...Array(3)].map((_, i) => (
+        {/* Deep Ink Splashes - Optimized Duo */}
+        {[...Array(2)].map((_, i) => (
           <motion.div
             key={`drop-${i}`}
             animate={{ 
-              scale: [0.95, 1.05, 0.95],
-              opacity: [0, 0.08, 0]
+              scale: [0.98, 1.02, 0.98],
+              opacity: [0, 0.05, 0]
             }}
             transition={{ 
-              duration: 15, 
+              duration: 20, 
               repeat: Infinity, 
-              delay: i * 4,
+              delay: i * 5,
               ease: "easeInOut"
             }}
-            className="absolute rounded-full bg-zinc-900 blur-[80px] will-change-transform"
+            className="absolute rounded-full bg-zinc-900 blur-[60px]"
             style={{
-              width: Math.random() * 300 + 300,
-              height: Math.random() * 300 + 300,
-              left: Math.random() * 100 + "%",
-              top: Math.random() * 100 + "%",
+              width: Math.random() * 300 + 400,
+              height: Math.random() * 300 + 400,
+              left: (i * 50) + "%",
+              top: (i * 30) + "%",
+              willChange: 'transform, opacity'
             }}
           />
         ))}
@@ -434,10 +435,10 @@ export default function App() {
           ) : (
             <motion.section
               key="booking"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.05 }}
-              className="max-w-2xl mx-auto"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              className="max-w-4xl mx-auto relative z-20"
             >
               {!success ? (
                 <div className="bg-zinc-900 border border-white/10 p-6 sm:p-12 rounded-4xl sm:rounded-[3rem] backdrop-blur-3xl shadow-2xl">
