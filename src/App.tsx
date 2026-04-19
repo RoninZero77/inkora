@@ -48,24 +48,38 @@ const Lightbox = ({ selectedImg, setSelectedImg }: { selectedImg: any, setSelect
   const motionZoom = useMotionValue(1);
   const motionPanX = useMotionValue(0);
   const motionPanY = useMotionValue(0);
-  const [isDragging, setIsDragging] = React.useState(false);
-  const [currentZoomDisplay, setCurrentZoomDisplay] = React.useState(100);
+  const [isDragging, setIsDragging] = useState(false);
+  const [currentZoomDisplay, setCurrentZoomDisplay] = useState(100);
+
+  // Robust Scroll Lock
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
+  const closeLightbox = (e?: any) => {
+    if (e) e.stopPropagation();
+    setSelectedImg(null);
+  };
 
   return (
     <motion.div
+      key="lightbox-main"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.2 } }}
       className="fixed inset-0 z-200 bg-black/98 backdrop-blur-3xl flex items-center justify-center overflow-hidden touch-none"
     >
-      <div className="absolute inset-0 z-0" onClick={() => setSelectedImg(null)} />
+      <div className="absolute inset-0 z-0" onClick={closeLightbox} />
 
-      <div className="absolute top-6 right-6 z-210 flex gap-4">
+      <div className="absolute top-6 right-6 z-210">
         <button
-          onClick={() => setSelectedImg(null)}
-          className="w-12 h-12 rounded-full bg-white/10 hover:bg-red-500/80 flex items-center justify-center transition-colors backdrop-blur-md border border-white/10"
+          onClick={closeLightbox}
+          className="w-14 h-14 rounded-full bg-white/10 hover:bg-red-500/80 flex items-center justify-center transition-all backdrop-blur-md border border-white/10 shadow-2xl active:scale-90"
         >
-          <X size={24} />
+          <X size={28} />
         </button>
       </div>
 
@@ -159,20 +173,12 @@ export default function App() {
   const [adminAuth, setAdminAuth] = useState(false);
   const [pin, setPin] = useState('');
 
-  // Bloquear scroll y resetear estado
+  // Scroll reset safety layer
   useEffect(() => {
-    if (selectedImg) {
-      document.body.style.overflow = 'hidden';
-      setZoom(1);
-      setPan({ x: 0, y: 0 });
-    } else {
+    if (!selectedImg) {
       document.body.style.overflow = 'unset';
       document.body.style.cursor = 'default';
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-      document.body.style.cursor = 'default';
-    };
   }, [selectedImg]);
 
   // Cerrar con tecla ESC
@@ -507,7 +513,10 @@ export default function App() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     key={img.src}
-                    onClick={() => { setSelectedImg(img); setZoom(1); }}
+                    onClick={(e) => { 
+                      e.stopPropagation();
+                      setSelectedImg(img); 
+                    }}
                     className="relative aspect-4/5 rounded-4xl overflow-hidden group border border-white/5 cursor-zoom-in"
                   >
                     <div className="absolute inset-0 bg-linear-to-tr from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10" />
