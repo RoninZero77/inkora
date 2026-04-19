@@ -174,13 +174,13 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Massive Old School Tattoo Rain - ULTRA OPTIMIZED */}
+      {/* Massive Old School Tattoo Rain - ULTRA OPTIMIZED 2.0 */}
       <div className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none overflow-hidden opacity-[0.2] bg-[#050505]">
-        {[...Array(50)].map((_, i) => {
-          const size = Math.random() * 22 + 12;
-          const duration = Math.random() * 8 + 7;
-          const delay = Math.random() * -20;
-          const leftPos = (i * (100 / 50)); 
+        {[...Array(30)].map((_, i) => {
+          const size = Math.random() * 25 + 15;
+          const duration = Math.random() * 6 + 4;
+          const delay = Math.random() * -15;
+          const leftPos = (i * (100 / 30)); 
           const icons = [<Skull size={size} />, <Sword size={size} />, <Anchor size={size} />, <Droplet size={size} />, <Zap size={size} />];
           const icon = icons[i % icons.length];
           
@@ -190,7 +190,7 @@ export default function App() {
               initial={{ y: -100, rotate: Math.random() * 360 }}
               animate={{ 
                 y: "110vh",
-                rotate: 360,
+                rotate: 180,
               }}
               transition={{ 
                 duration, 
@@ -198,33 +198,33 @@ export default function App() {
                 delay,
                 ease: "linear" 
               }}
-              className="absolute text-zinc-500/60 flex flex-col items-center will-change-transform"
+              className="absolute text-zinc-500/50 flex flex-col items-center will-change-transform"
               style={{ left: `${leftPos}%` }}
             >
               {icon}
-              <div className="w-px h-24 bg-linear-to-b from-zinc-700/40 to-transparent mt-1" />
+              <div className="w-px h-20 bg-linear-to-b from-zinc-700/30 to-transparent mt-1" />
             </motion.div>
           );
         })}
         
-        {/* Deep Ink Splashes - Optimized */}
-        {[...Array(6)].map((_, i) => (
+        {/* Deep Ink Splashes - Light Optimization */}
+        {[...Array(3)].map((_, i) => (
           <motion.div
             key={`drop-${i}`}
             animate={{ 
-              scale: [0.9, 1.1, 0.9],
-              opacity: [0, 0.1, 0]
+              scale: [0.95, 1.05, 0.95],
+              opacity: [0, 0.08, 0]
             }}
             transition={{ 
-              duration: 12, 
+              duration: 15, 
               repeat: Infinity, 
-              delay: i * 3,
+              delay: i * 4,
               ease: "easeInOut"
             }}
-            className="absolute rounded-full bg-zinc-900 blur-[100px] will-change-transform"
+            className="absolute rounded-full bg-zinc-900 blur-[80px] will-change-transform"
             style={{
-              width: Math.random() * 400 + 300,
-              height: Math.random() * 400 + 300,
+              width: Math.random() * 300 + 300,
+              height: Math.random() * 300 + 300,
               left: Math.random() * 100 + "%",
               top: Math.random() * 100 + "%",
             }}
@@ -244,19 +244,41 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Fixed Logo (Top Left) - Responsivo */}
-      <div className="fixed top-2 left-2 sm:left-4 z-100">
-        <button onClick={() => setSection('home')} className="hover:scale-105 transition-transform duration-500">
+      {/* Desktop Logo (Fixed Corner) - MAX IMPACT */}
+      <div className="hidden sm:block fixed top-4 left-6 z-100 group">
+        <div className="absolute inset-0 bg-yellow-400/20 blur-[60px] rounded-full group-hover:bg-yellow-400/40 transition-all duration-1000" />
+        <button onClick={() => setSection('home')} className="relative hover:scale-110 transition-transform duration-500">
           <img
             src="/assets/logo.png"
             alt="INKORA"
-            className="h-20 sm:h-28 lg:h-40 w-auto drop-shadow-[0_0_15px_rgba(255,255,0,0.8)] brightness-125"
+            className="h-32 lg:h-56 w-auto brightness-150 contrast-125"
+            style={{ 
+              filter: 'drop-shadow(0 0 15px rgba(255,255,0,0.8)) drop-shadow(0 0 30px rgba(255,255,0,0.4))' 
+            }}
           />
         </button>
       </div>
 
-      {/* Main Content */}
-      <main className="relative pt-32 pb-20 px-6">
+      {/* Header Space for Nav */}
+      <div className="h-28 sm:h-10" />
+
+      {/* Mobile Logo - New Central & Large Positioning (Mobile only) */}
+      <div className="sm:hidden flex justify-center mb-6 relative z-10 px-6">
+        <motion.button 
+          onClick={() => setSection('home')} 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <img
+            src="/assets/logo.png"
+            alt="INKORA"
+            className="h-28 w-auto object-contain drop-shadow-[0_0_25px_rgba(255,255,0,0.8)] brightness-150"
+            loading="eager"
+          />
+        </motion.button>
+      </div>
+
+      <main className="relative z-10 px-6 pt-10 sm:pt-40 pb-32">
         <AnimatePresence mode="wait">
           {section === 'home' ? (
             <motion.section
@@ -407,37 +429,37 @@ export default function App() {
               className="max-w-2xl mx-auto"
             >
               {!success ? (
-                <div className="bg-zinc-900/50 p-6 sm:p-12 rounded-4xl sm:rounded-[3rem] border border-white/5 backdrop-blur-3xl">
-                  <h2 className="text-3xl sm:text-4xl font-black mb-2 uppercase tracking-tighter">RESERVA</h2>
-                  <p className="text-zinc-500 mb-8 sm:mb-10 text-xs sm:text-sm">Tus datos serán guardados para nuestra gestión interna y luego hablaremos por WhatsApp.</p>
+                <div className="bg-zinc-900 border border-white/10 p-6 sm:p-12 rounded-4xl sm:rounded-[3rem] backdrop-blur-3xl shadow-2xl">
+                  <h2 className="text-3xl sm:text-5xl font-black mb-2 uppercase tracking-tighter text-white">RESERVA</h2>
+                  <p className="text-zinc-400 mb-8 sm:mb-10 text-xs sm:text-sm font-bold">Reserva tu historia hoy.</p>
 
                   <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-                    <div className="space-y-1">
-                      <label className="text-[10px] uppercase tracking-[0.2em] opacity-40">Nombre Completo</label>
+                    <div className="space-y-2">
+                      <label className="text-xs uppercase tracking-[0.2em] font-black text-amber-500">Nombre Completo</label>
                       <input
                         required
-                        className="w-full bg-white/5 border border-white/5 p-5 rounded-2xl focus:border-amber-500 outline-none transition-all placeholder:text-zinc-700"
+                        className="w-full bg-black/40 border border-white/10 p-5 rounded-2xl focus:border-amber-500 text-white outline-none transition-all placeholder:text-zinc-600 font-medium"
                         placeholder="Tu nombre aquí"
                         value={formData.name}
                         onChange={e => setFormData({ ...formData, name: e.target.value })}
                       />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-1">
-                        <label className="text-[10px] uppercase tracking-[0.2em] opacity-40">Email</label>
+                      <div className="space-y-2">
+                        <label className="text-xs uppercase tracking-[0.2em] font-black text-amber-500">Email</label>
                         <input
                           required type="email"
-                          className="w-full bg-white/5 border border-white/5 p-5 rounded-2xl focus:border-amber-500 outline-none transition-all placeholder:text-zinc-700"
+                          className="w-full bg-black/40 border border-white/10 p-5 rounded-2xl focus:border-amber-500 text-white outline-none transition-all placeholder:text-zinc-600 font-medium"
                           placeholder="hola@ejemplo.com"
                           value={formData.email}
                           onChange={e => setFormData({ ...formData, email: e.target.value })}
                         />
                       </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] uppercase tracking-[0.2em] opacity-40">WhatsApp</label>
+                      <div className="space-y-2">
+                        <label className="text-xs uppercase tracking-[0.2em] font-black text-amber-500">WhatsApp</label>
                         <input
                           required
-                          className="w-full bg-white/5 border border-white/5 p-5 rounded-2xl focus:border-amber-500 outline-none transition-all placeholder:text-zinc-700"
+                          className="w-full bg-black/40 border border-white/10 p-5 rounded-2xl focus:border-amber-500 text-white outline-none transition-all placeholder:text-zinc-600 font-medium"
                           placeholder="+57..."
                           value={formData.phone}
                           onChange={e => setFormData({ ...formData, phone: e.target.value })}
@@ -461,11 +483,11 @@ export default function App() {
                         ))}
                       </div>
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] uppercase tracking-[0.2em] opacity-40">Descripción de la idea</label>
+                    <div className="space-y-2">
+                      <label className="text-xs uppercase tracking-[0.2em] font-black text-amber-500">Descripción de la idea</label>
                       <textarea
                         required rows={3}
-                        className="w-full bg-white/5 border border-white/5 p-5 rounded-2xl focus:border-amber-500 outline-none transition-all placeholder:text-zinc-700 resize-none"
+                        className="w-full bg-black/40 border border-white/10 p-5 rounded-2xl focus:border-amber-500 text-white outline-none transition-all placeholder:text-zinc-600 resize-none font-medium"
                         placeholder="Contamos un poco sobre lo que tienes en mente..."
                         value={formData.description}
                         onChange={e => setFormData({ ...formData, description: e.target.value })}
