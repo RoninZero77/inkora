@@ -262,8 +262,8 @@ export default function App() {
       {/* Header Space for Nav */}
       <div className="h-28 sm:h-10" />
 
-      {/* Mobile Logo - New Central & Large Positioning (Mobile only) */}
-      <div className="sm:hidden flex justify-center mb-6 relative z-10 px-6">
+      {/* Mobile Logo - MAX IMPACT (Mobile only) */}
+      <div className="sm:hidden flex justify-center mb-10 relative z-10 px-6">
         <motion.button 
           onClick={() => setSection('home')} 
           initial={{ opacity: 0, scale: 0.8 }}
@@ -272,7 +272,10 @@ export default function App() {
           <img
             src="/assets/logo.png"
             alt="INKORA"
-            className="h-28 w-auto object-contain drop-shadow-[0_0_25px_rgba(255,255,0,0.8)] brightness-150"
+            className="h-48 w-auto object-contain brightness-150 contrast-125"
+            style={{ 
+              filter: 'drop-shadow(0 0 15px rgba(255,255,0,0.8)) drop-shadow(0 0 35px rgba(255,255,0,0.5))' 
+            }}
             loading="eager"
           />
         </motion.button>
