@@ -641,7 +641,7 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-100 bg-black/90 backdrop-blur-xl p-6 md:p-20 overflow-y-auto"
+            className="fixed inset-0 z-10000 bg-black/98 backdrop-blur-3xl p-6 md:p-20 overflow-y-auto"
           >
             <div className="max-w-4xl mx-auto pb-20">
               <div className="flex justify-between items-center mb-16">
