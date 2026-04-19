@@ -173,11 +173,12 @@ export default function App() {
   const [adminAuth, setAdminAuth] = useState(false);
   const [pin, setPin] = useState('');
 
-  // Scroll reset safety layer
+  // Scroll & Interaction Reset Safety Layer (Desktop & Mobile Fix)
   useEffect(() => {
     if (!selectedImg) {
       document.body.style.overflow = 'unset';
       document.body.style.cursor = 'default';
+      document.body.style.pointerEvents = 'auto'; // Re-enable interaction
     }
   }, [selectedImg]);
 
