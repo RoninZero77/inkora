@@ -292,6 +292,13 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* Lightbox - Motor de Alto Rendimiento 60FPS (TOP LEVEL) */}
+      <AnimatePresence>
+        {selectedImg && (
+          <Lightbox selectedImg={selectedImg} setSelectedImg={setSelectedImg} />
+        )}
+      </AnimatePresence>
+
       {/* Massive Old School Tattoo Rain - ULTRA OPTIMIZED 2.0 */}
       <div className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none overflow-hidden opacity-[0.2] bg-[#050505]">
         {[...Array(30)].map((_, i) => {
@@ -521,7 +528,8 @@ export default function App() {
                     layout
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    key={img.src}
+                    key={`img-${catFilter}-${img.src}-${i}`}
+                    id={`gallery-item-${i}`}
                     onClick={(e) => { 
                       e.stopPropagation();
                       setSelectedImg(img); 
@@ -775,12 +783,6 @@ export default function App() {
         </p>
       </footer>
 
-      {/* Lightbox - Motor de Alto Rendimiento 60FPS */}
-      <AnimatePresence>
-        {selectedImg && (
-          <Lightbox selectedImg={selectedImg} setSelectedImg={setSelectedImg} />
-        )}
-      </AnimatePresence>
     </div>
   );
 }
