@@ -410,33 +410,35 @@ export default function App() {
       </div>
 
       <main className="relative z-10 px-6 pt-10 sm:pt-40 pb-32">
-        <AnimatePresence>
-          {section === 'home' && (
-            <motion.section
-              key="home"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="max-w-6xl mx-auto"
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
-                <div className="space-y-10 text-center lg:text-left">
-                  <motion.h1 
-                    className="text-5xl sm:text-7xl lg:text-9xl font-black tracking-tighter leading-[0.9]"
-                  >
-                    {["ARTE", "SIN", "LÍMITES"].map((word, i) => (
-                      <span key={i} className="block overflow-hidden h-fit">
-                        <motion.span
-                          initial={{ y: "100%" }}
-                          animate={!isLoading ? { y: 0 } : { y: "100%" }}
-                          transition={{ duration: 0.8, delay: 0.5 + (i * 0.1), ease: [0.33, 1, 0.68, 1] }}
-                          className={cn("inline-block", i === 2 ? "text-gradient" : "")}
-                        >
-                          {word}
-                        </motion.span>
-                      </span>
-                    ))}
-                  </motion.h1>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={section}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="w-full"
+          >
+            {section === 'home' && (
+              <motion.section
+                className="max-w-6xl mx-auto"
+              >
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
+                  <div className="space-y-10 text-center lg:text-left">
+                    <h1 className="text-5xl sm:text-7xl lg:text-9xl font-black tracking-tighter leading-[0.9]">
+                      {["ARTE", "SIN", "LÍMITES"].map((word, i) => (
+                        <span key={i} className="block overflow-hidden h-fit">
+                          <motion.span
+                            initial={{ y: "100%" }}
+                            animate={{ y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.2 + (i * 0.1), ease: [0.33, 1, 0.68, 1] }}
+                            className={cn("inline-block", i === 2 ? "text-gradient" : "")}
+                          >
+                            {word}
+                          </motion.span>
+                        </span>
+                      ))}
+                    </h1>
                   <p className="text-lg sm:text-xl text-zinc-400 max-w-md mx-auto lg:mx-0 font-light leading-relaxed">
                     Personalizamos cada trazo para que tu piel sea el lienzo de tu mejor historia.
                   </p>
@@ -456,14 +458,15 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="relative group mx-auto max-w-md lg:max-w-none">
-                  <div className="absolute inset-0 bg-amber-500/10 blur-[100px] rounded-full group-hover:bg-amber-500/20 transition-all duration-1000" />
-                  <img
-                    src="/assets/producto/mujer/brazo_leon.png"
-                    alt="Inkora Show"
-                    className="relative w-full aspect-4/5 object-cover rounded-[3rem] grayscale hover:grayscale-0 transition-all duration-1000 border border-white/5 shadow-2xl"
-                  />
-                </div>
+                  <div className="relative group mx-auto max-w-md lg:max-w-none">
+                    <div className="absolute inset-0 bg-amber-500/10 blur-[100px] rounded-full group-hover:bg-amber-500/20 transition-all duration-1000" />
+                    <img
+                      src="/assets/producto/mujer/brazo_leon.png"
+                      id="hero-main-image"
+                      alt="Inkora Studio Hero"
+                      className="relative w-full aspect-4/5 object-cover rounded-[3rem] grayscale hover:grayscale-0 transition-all duration-1000 border border-white/5 shadow-2xl"
+                    />
+                  </div>
               </div>
 
               {/* Stats/Badges */}
@@ -481,94 +484,82 @@ export default function App() {
                 ))}
               </div>
             </motion.section>
-          )}
+              </motion.section>
+            )}
 
-          {section === 'catalogue' && (
-            <motion.section
-              key="catalogue"
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.02 }}
-              className="max-w-6xl mx-auto"
-            >
-              <div className="text-center mb-10 sm:mb-16">
-                <h2 className="text-4xl sm:text-6xl font-black tracking-tighter uppercase mb-4">Catálogo de <span className="text-gradient">Trabajos</span></h2>
-                <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mt-6">
-                  {['HOMBRE', 'MUJER'].map(cat => (
-                    <motion.button
-                      key={cat}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setCatFilter(cat)}
-                      className={cn(
-                        "px-8 sm:px-12 py-3 rounded-full text-[10px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] transition-all border",
-                        catFilter === cat ? "bg-amber-500 border-amber-500 text-black px-10 sm:px-14 shadow-[0_0_20px_rgba(245,158,11,0.3)]" : "border-white/5 text-zinc-500 hover:border-white/20"
-                      )}
+            {section === 'catalogue' && (
+              <motion.section className="max-w-6xl mx-auto">
+                <div className="text-center mb-10 sm:mb-16">
+                  <h2 className="text-4xl sm:text-6xl font-black tracking-tighter uppercase mb-4">Catálogo de <span className="text-gradient">Trabajos</span></h2>
+                  <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mt-6">
+                    {['HOMBRE', 'MUJER'].map(cat => (
+                      <motion.button
+                        key={cat}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setCatFilter(cat)}
+                        className={cn(
+                          "px-8 sm:px-12 py-3 rounded-full text-[10px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] transition-all border",
+                          catFilter === cat ? "bg-amber-500 border-amber-500 text-black px-10 sm:px-14 shadow-[0_0_20_rgba(245,158,11,0.3)]" : "border-white/5 text-zinc-500 hover:border-white/20"
+                        )}
+                      >
+                        {cat}
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {(catFilter === 'HOMBRE' ? [
+                    { src: '/assets/producto/hombre/abdomen.png', title: 'Abdomen Warrior' },
+                    { src: '/assets/producto/hombre/anime.png', title: 'Anime Culture' },
+                    { src: '/assets/producto/hombre/espalda.png', title: 'Full Back' },
+                    { src: '/assets/producto/hombre/gemelo.png', title: 'Geometry Calf' },
+                  ] : [
+                    { src: '/assets/producto/mujer/brazo_leon.png', title: 'Queen Lion' },
+                    { src: '/assets/producto/mujer/calavera.png', title: 'Floral Skull' },
+                    { src: '/assets/producto/mujer/demonia.png', title: 'Dark Soul' },
+                    { src: '/assets/producto/mujer/hada.png', title: 'Fairy Forest' },
+                    { src: '/assets/producto/mujer/pierna_buho.png', title: 'Owl Spirit' },
+                  ]).map((img, i) => (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      key={`gallery-${catFilter}-${i}`}
+                      id={`gallery-item-${catFilter}-${i}`}
+                      onClick={(e) => { 
+                        e.stopPropagation();
+                        setSelectedImg(img); 
+                      }}
+                      className="relative aspect-4/5 rounded-4xl overflow-hidden group border border-white/5 cursor-zoom-in"
                     >
-                      {cat}
-                    </motion.button>
+                      <div className="absolute inset-0 bg-linear-to-tr from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10" />
+                      <img src={img.src} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0" alt={img.title} />
+                      <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-linear-to-r from-transparent via-white/10 to-transparent pointer-events-none z-20" />
+                      <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-8 z-30">
+                        <div>
+                          <p className="text-[10px] text-amber-500 uppercase tracking-widest font-bold mb-1">{catFilter}</p>
+                          <h4 className="text-xl font-bold uppercase">{img.title}</h4>
+                        </div>
+                      </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {(catFilter === 'HOMBRE' ? [
-                  { src: '/assets/producto/hombre/abdomen.png', title: 'Abdomen Warrior' },
-                  { src: '/assets/producto/hombre/anime.png', title: 'Anime Culture' },
-                  { src: '/assets/producto/hombre/espalda.png', title: 'Full Back' },
-                  { src: '/assets/producto/hombre/gemelo.png', title: 'Geometry Calf' },
-                ] : [
-                  { src: '/assets/producto/mujer/brazo_leon.png', title: 'Queen Lion' },
-                  { src: '/assets/producto/mujer/calavera.png', title: 'Floral Skull' },
-                  { src: '/assets/producto/mujer/demonia.png', title: 'Dark Soul' },
-                  { src: '/assets/producto/mujer/hada.png', title: 'Fairy Forest' },
-                  { src: '/assets/producto/mujer/pierna_buho.png', title: 'Owl Spirit' },
-                ]).map((img, i) => (
-                  <motion.div
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    key={`img-${catFilter}-${img.src}-${i}`}
-                    id={`gallery-item-${i}`}
-                    onClick={(e) => { 
-                      e.stopPropagation();
-                      setSelectedImg(img); 
-                    }}
-                    className="relative aspect-4/5 rounded-4xl overflow-hidden group border border-white/5 cursor-zoom-in"
+                <div className="mt-20 text-center">
+                  <button
+                    onClick={() => { setSection('booking'); setSelectedImg(null); }}
+                    className="bg-zinc-900 border border-white/10 px-12 py-5 rounded-full font-bold uppercase tracking-widest hover:border-amber-500 transition-all duration-500"
                   >
-                    <div className="absolute inset-0 bg-linear-to-tr from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10" />
-                    <img src={img.src} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0" />
-                    {/* Skin Shimmer Effect */}
-                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-linear-to-r from-transparent via-white/10 to-transparent pointer-events-none z-20" />
-                    <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-8 z-30">
-                      <div>
-                        <p className="text-[10px] text-amber-500 uppercase tracking-widest font-bold mb-1">{catFilter}</p>
-                        <h4 className="text-xl font-bold uppercase">{img.title}</h4>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                    ¿Te gusta alguno? Reserva aquí
+                  </button>
+                </div>
+              </motion.section>
+            )}
 
-              <div className="mt-20 text-center">
-                <button
-                  onClick={() => setSection('booking')}
-                  className="bg-zinc-900 border border-white/10 px-12 py-5 rounded-full font-bold uppercase tracking-widest hover:border-amber-500 transition-all duration-500"
-                >
-                  ¿Te gusta alguno? Reserva aquí
-                </button>
-              </div>
-            </motion.section>
-          )}
-
-          {section === 'booking' && (
-            <motion.section
-              key="booking"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              className="max-w-4xl mx-auto relative z-20"
-            >
+            {section === 'booking' && (
+              <motion.section className="max-w-4xl mx-auto relative z-20">
               {!success ? (
                 <div className="bg-zinc-900 border border-white/10 p-6 sm:p-12 rounded-4xl sm:rounded-[3rem] backdrop-blur-3xl shadow-2xl">
                   <h2 className="text-3xl sm:text-5xl font-black mb-2 uppercase tracking-tighter text-white">RESERVA</h2>
@@ -670,8 +661,9 @@ export default function App() {
               )}
             </motion.section>
           )}
-        </AnimatePresence>
-      </main>
+        </motion.div>
+      </AnimatePresence>
+    </main>
 
       {/* Floating WhatsApp (Always visible) */}
       <button
