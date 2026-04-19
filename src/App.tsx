@@ -271,27 +271,17 @@ export default function App() {
       {/* Header Space for Nav */}
       <div className="h-28 sm:h-10" />
 
-      {/* Mobile Logo - MAX IMPACT (Mobile only) */}
-      <div className="sm:hidden flex justify-center mb-10 relative z-10 px-6">
-        <motion.button 
-          onClick={() => setSection('home')} 
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          <img
-            src="/assets/logo.png"
-            alt="INKORA"
-            className="h-48 w-auto object-contain brightness-150 contrast-125"
-            style={{ 
-              filter: 'drop-shadow(0 0 15px rgba(255,255,0,0.8)) drop-shadow(0 0 35px rgba(255,255,0,0.5))' 
             }}
             loading="eager"
           />
         </motion.button>
       </div>
 
-      <main className="relative z-10 px-6 pt-10 sm:pt-40 pb-32">
-        <AnimatePresence mode="wait">
+      <main className={cn(
+        "relative z-10 px-6 pb-32 transition-all duration-500",
+        section === 'home' ? "pt-10 sm:pt-40" : "pt-4 sm:pt-32"
+      )}>
+        <AnimatePresence>
           {section === 'home' ? (
             <motion.section
               key="home"
