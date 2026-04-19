@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import {
   MessageSquare,
   Send,
@@ -44,6 +44,109 @@ const deleteLead = (id: number) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(existing.filter((l: any) => l.id !== id)));
 };
 
+const Lightbox = ({ selectedImg, setSelectedImg }: { selectedImg: any, setSelectedImg: (img: any) => void }) => {
+  const motionZoom = useMotionValue(1);
+  const motionPanX = useMotionValue(0);
+  const motionPanY = useMotionValue(0);
+  const [isDragging, setIsDragging] = React.useState(false);
+  const [currentZoomDisplay, setCurrentZoomDisplay] = React.useState(100);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.2 } }}
+      className="fixed inset-0 z-200 bg-black/98 backdrop-blur-3xl flex items-center justify-center overflow-hidden touch-none"
+    >
+      <div className="absolute inset-0 z-0" onClick={() => setSelectedImg(null)} />
+
+      <div className="absolute top-6 right-6 z-210 flex gap-4">
+        <button
+          onClick={() => setSelectedImg(null)}
+          className="w-12 h-12 rounded-full bg-white/10 hover:bg-red-500/80 flex items-center justify-center transition-colors backdrop-blur-md border border-white/10"
+        >
+          <X size={24} />
+        </button>
+      </div>
+
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 z-210 bg-black/50 px-6 py-2 rounded-full border border-white/10 text-[10px] uppercase tracking-[0.3em] font-bold">
+        {selectedImg.title} <span className="text-amber-500 ml-4">{currentZoomDisplay}%</span>
+      </div>
+
+      <div
+        className="relative w-full h-full flex items-center justify-center cursor-move"
+        onWheel={(e) => {
+          const delta = e.deltaY * -0.005;
+          const next = Math.min(Math.max(motionZoom.get() + delta, 0.5), 5);
+          motionZoom.set(next);
+          setCurrentZoomDisplay(Math.round(next * 100));
+        }}
+        onMouseDown={() => setIsDragging(true)}
+        onMouseUp={() => setIsDragging(false)}
+        onMouseMove={(e) => {
+          if (!isDragging || motionZoom.get() <= 1.05) return;
+          motionPanX.set(motionPanX.get() + e.movementX);
+          motionPanY.set(motionPanY.get() + e.movementY);
+        }}
+        onTouchStart={(e) => {
+          setIsDragging(true);
+          if (e.touches.length === 2) {
+            (e.currentTarget as any)._lastDist = Math.hypot(
+              e.touches[0].pageX - e.touches[1].pageX,
+              e.touches[0].pageY - e.touches[1].pageY
+            );
+          } else if (e.touches.length === 1) {
+            (e.currentTarget as any)._lastTouch = { x: e.touches[0].pageX, y: e.touches[0].pageY };
+          }
+        }}
+        onTouchEnd={() => {
+          setIsDragging(false);
+          setCurrentZoomDisplay(Math.round(motionZoom.get() * 100));
+        }}
+        onTouchMove={(e) => {
+          if (e.touches.length === 2) {
+            const dist = Math.hypot(
+              e.touches[0].pageX - e.touches[1].pageX,
+              e.touches[0].pageY - e.touches[1].pageY
+            );
+            const lastDist = (e.currentTarget as any)._lastDist || dist;
+            const delta = (dist - lastDist) * 0.01;
+            motionZoom.set(Math.min(Math.max(motionZoom.get() + delta, 0.5), 5));
+            (e.currentTarget as any)._lastDist = dist;
+          } else if (e.touches.length === 1 && motionZoom.get() > 1.05) {
+            const touch = { x: e.touches[0].pageX, y: e.touches[0].pageY };
+            const lastTouch = (e.currentTarget as any)._lastTouch || touch;
+            motionPanX.set(motionPanX.get() + (touch.x - lastTouch.x));
+            motionPanY.set(motionPanY.get() + (touch.y - lastTouch.y));
+            (e.currentTarget as any)._lastTouch = touch;
+          }
+        }}
+      >
+        <motion.div
+          style={{
+            scale: motionZoom,
+            x: motionPanX,
+            y: motionPanY,
+            willChange: 'transform'
+          }}
+          className="relative pointer-events-none"
+        >
+          <img
+            src={selectedImg.src}
+            alt={selectedImg.title}
+            className="max-h-[75vh] sm:max-h-[85vh] w-auto rounded-lg shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/5"
+          />
+        </motion.div>
+      </div>
+
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-zinc-500 text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.4em] pointer-events-none text-center px-6">
+        <span className="sm:hidden">Pellizca para zoom y arrastra para explorar</span>
+        <span className="hidden sm:inline">Usa el scroll y arrastra para explorar el detalle</span>
+      </div>
+    </motion.div>
+  );
+};
+
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [section, setSection] = useState('home');
@@ -56,20 +159,12 @@ export default function App() {
   const [adminAuth, setAdminAuth] = useState(false);
   const [pin, setPin] = useState('');
 
-  // Motion Values for Ultra-Performance (60FPS Zoom/Pan)
-  const motionZoom = useMotionValue(1);
-  const motionPanX = useMotionValue(0);
-  const motionPanY = useMotionValue(0);
-  const [currentZoomDisplay, setCurrentZoomDisplay] = useState(100);
-
   // Bloquear scroll y resetear estado
   useEffect(() => {
     if (selectedImg) {
       document.body.style.overflow = 'hidden';
-      motionZoom.set(1);
-      motionPanX.set(0);
-      motionPanY.set(0);
-      setCurrentZoomDisplay(100);
+      setZoom(1);
+      setPan({ x: 0, y: 0 });
     } else {
       document.body.style.overflow = 'unset';
       document.body.style.cursor = 'default';
@@ -182,13 +277,13 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Massive Old School Tattoo Rain - ULTRA OPTIMIZED 3.0 */}
+      {/* Massive Old School Tattoo Rain - ULTRA OPTIMIZED 2.0 */}
       <div className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none overflow-hidden opacity-[0.2] bg-[#050505]">
-        {[...Array(20)].map((_, i) => {
-          const size = Math.random() * 30 + 20;
-          const duration = Math.random() * 5 + 3;
-          const delay = Math.random() * -10;
-          const leftPos = (i * (100 / 20)); 
+        {[...Array(30)].map((_, i) => {
+          const size = Math.random() * 25 + 15;
+          const duration = Math.random() * 6 + 4;
+          const delay = Math.random() * -15;
+          const leftPos = (i * (100 / 30)); 
           const icons = [<Skull size={size} />, <Sword size={size} />, <Anchor size={size} />, <Droplet size={size} />, <Zap size={size} />];
           const icon = icons[i % icons.length];
           
@@ -206,50 +301,46 @@ export default function App() {
                 delay,
                 ease: "linear" 
               }}
-              className="absolute text-zinc-500/40 flex flex-col items-center"
-              style={{ left: `${leftPos}%`, willChange: 'transform' }}
+              className="absolute text-zinc-500/50 flex flex-col items-center will-change-transform"
+              style={{ left: `${leftPos}%` }}
             >
               {icon}
-              <div className="w-px h-16 bg-linear-to-b from-zinc-700/20 to-transparent mt-1" />
+              <div className="w-px h-20 bg-linear-to-b from-zinc-700/30 to-transparent mt-1" />
             </motion.div>
           );
         })}
         
-        {/* Deep Ink Splashes - Optimized Duo */}
-        {[...Array(2)].map((_, i) => (
+        {/* Deep Ink Splashes - Light Optimization */}
+        {[...Array(3)].map((_, i) => (
           <motion.div
             key={`drop-${i}`}
             animate={{ 
-              scale: [0.98, 1.02, 0.98],
-              opacity: [0, 0.05, 0]
+              scale: [0.95, 1.05, 0.95],
+              opacity: [0, 0.08, 0]
             }}
             transition={{ 
-              duration: 20, 
+              duration: 15, 
               repeat: Infinity, 
-              delay: i * 5,
+              delay: i * 4,
               ease: "easeInOut"
             }}
-            className="absolute rounded-full bg-zinc-900 blur-[60px]"
+            className="absolute rounded-full bg-zinc-900 blur-[80px] will-change-transform"
             style={{
-              width: Math.random() * 300 + 400,
-              height: Math.random() * 300 + 400,
-              left: (i * 50) + "%",
-              top: (i * 30) + "%",
-              willChange: 'transform, opacity'
+              width: Math.random() * 300 + 300,
+              height: Math.random() * 300 + 300,
+              left: Math.random() * 100 + "%",
+              top: Math.random() * 100 + "%",
             }}
           />
         ))}
       </div>
 
       {/* Navigation - Responsive Adaptada */}
-      <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-100 flex items-center bg-black/40 backdrop-blur-2xl border border-white/5 px-8 py-4 rounded-full gap-8 text-[10px] uppercase tracking-[0.3em] font-black">
-        <div className="flex items-center gap-6 pr-6 border-r border-white/5">
+      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] sm:w-auto sm:min-w-[400px] z-100 px-6 sm:px-10 py-3 flex justify-center items-center backdrop-blur-xl bg-zinc-200/90 border border-zinc-300 shadow-2xl rounded-full">
+        <div className="flex gap-4 sm:gap-10 text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-black">
           <button onClick={() => setSection('home')} className="hover:opacity-60 transition-opacity">Studio</button>
           <button onClick={() => setSection('catalogue')} className="hover:opacity-60 transition-opacity">Catálogo</button>
           <button onClick={() => setSection('booking')} className="hover:opacity-60 transition-opacity">Reserva</button>
-        </div>
-        <div className="flex items-center gap-4 pl-6 text-zinc-500">
-          <a href="#" className="hover:text-white transition-colors"><Instagram size={16} /></a>
           <button onClick={() => setShowAdmin(true)} className="hover:text-amber-600 transition-all flex items-center gap-2">
             <Database size={14} /> <span className="hidden xs:inline">Gestión</span>
           </button>
@@ -274,31 +365,27 @@ export default function App() {
       {/* Header Space for Nav */}
       <div className="h-28 sm:h-10" />
 
-      {/* Mobile Logo - Dynamic size (Fixed Syntax) */}
-      <div className={cn(
-        "sm:hidden flex justify-center relative z-10 px-6 transition-all duration-500",
-        section === 'home' ? "h-48 mb-10 mt-20" : "h-24 mb-4 mt-20"
-      )}>
+      {/* Mobile Logo - MAX IMPACT (Mobile only) */}
+      <div className="sm:hidden flex justify-center mb-10 relative z-10 px-6">
         <motion.button 
-          onClick={() => setSection('home')}
-          initial={{ opacity: 0, scale: 0.9 }}
+          onClick={() => setSection('home')} 
+          initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="relative inline-block"
         >
           <img
             src="/assets/logo.png"
             alt="INKORA"
-            className="h-full object-contain filter brightness-150 contrast-125 drop-shadow-[0_0_15px_rgba(245,158,11,0.8)]"
+            className="h-44 w-auto object-contain brightness-150 contrast-125"
+            style={{ 
+              filter: 'drop-shadow(0 0 15px rgba(245,158,11,0.8)) drop-shadow(0 0 35px rgba(245,158,11,0.5))' 
+            }}
             loading="eager"
           />
         </motion.button>
       </div>
 
-      <main className={cn(
-        "relative z-10 px-6 pb-32 transition-all duration-500",
-        section === 'home' ? "pt-10 sm:pt-40" : "pt-4 sm:pt-32"
-      )}>
-        <AnimatePresence>
+      <main className="relative z-10 px-6 pt-10 sm:pt-40 pb-32">
+        <AnimatePresence mode="wait">
           {section === 'home' ? (
             <motion.section
               key="home"
@@ -379,35 +466,19 @@ export default function App() {
             >
               <div className="text-center mb-10 sm:mb-16">
                 <h2 className="text-4xl sm:text-6xl font-black tracking-tighter uppercase mb-4">Catálogo de <span className="text-gradient">Trabajos</span></h2>
-                <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-8">
-                  {[
-                    { id: 'HOMBRE', icon: <User size={16} /> },
-                    { id: 'MUJER', icon: <User size={16} /> }
-                  ].map(cat => (
+                <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mt-6">
+                  {['HOMBRE', 'MUJER'].map(cat => (
                     <motion.button
-                      key={cat.id}
+                      key={cat}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => setCatFilter(cat.id)}
+                      onClick={() => setCatFilter(cat)}
                       className={cn(
-                        "relative px-8 sm:px-12 py-4 rounded-full text-[10px] sm:text-xs font-black tracking-[0.3em] transition-all border flex items-center gap-3 overflow-hidden",
-                        catFilter === cat.id 
-                          ? "bg-amber-500 border-amber-500 text-black shadow-[0_0_25px_rgba(245,158,11,0.5)]" 
-                          : "border-white/10 text-zinc-500 hover:border-amber-500/50 hover:text-white"
+                        "px-8 sm:px-12 py-3 rounded-full text-[10px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] transition-all border",
+                        catFilter === cat ? "bg-amber-500 border-amber-500 text-black px-10 sm:px-14 shadow-[0_0_20px_rgba(245,158,11,0.3)]" : "border-white/5 text-zinc-500 hover:border-white/20"
                       )}
                     >
-                      <span className={cn(catFilter === cat.id ? "text-black" : "text-amber-500/50")}>
-                        {cat.icon}
-                      </span>
-                      {cat.id}
-                      {catFilter === cat.id && (
-                        <motion.div 
-                          layoutId="activeGlow"
-                          className="absolute inset-0 bg-white/20 blur-xl px-4"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                        />
-                      )}
+                      {cat}
                     </motion.button>
                   ))}
                 </div>
@@ -460,10 +531,10 @@ export default function App() {
           ) : (
             <motion.section
               key="booking"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              className="max-w-4xl mx-auto relative z-20"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              className="max-w-2xl mx-auto"
             >
               {!success ? (
                 <div className="bg-zinc-900 border border-white/10 p-6 sm:p-12 rounded-4xl sm:rounded-[3rem] backdrop-blur-3xl shadow-2xl">
@@ -679,129 +750,10 @@ export default function App() {
         </p>
       </footer>
 
-      {/* Lightbox - Edición Ultra-Táctil OPTIMIZADA (60FPS) */}
+      {/* Lightbox - Motor de Alto Rendimiento 60FPS */}
       <AnimatePresence>
         {selectedImg && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.2 } }}
-            className="fixed inset-0 z-200 bg-black/98 backdrop-blur-3xl flex items-center justify-center overflow-hidden touch-none"
-          >
-            {/* Fondo que cierra al hacer clic */}
-            <div className="absolute inset-0 z-0" onClick={() => setSelectedImg(null)} />
-
-            {/* Controles Superiores */}
-            <div className="absolute top-6 right-6 z-210 flex gap-4">
-              <div className="hidden sm:flex gap-2">
-                <button
-                  onClick={() => {
-                    const next = Math.min(motionZoom.get() + 0.5, 5);
-                    motionZoom.set(next);
-                    setCurrentZoomDisplay(Math.round(next * 100));
-                  }}
-                  className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/5"
-                >
-                  <ChevronRight size={20} className="-rotate-90" />
-                </button>
-                <button
-                  onClick={() => {
-                    const next = Math.max(motionZoom.get() - 0.5, 0.5);
-                    motionZoom.set(next);
-                    setCurrentZoomDisplay(Math.round(next * 100));
-                  }}
-                  className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/5"
-                >
-                  <ChevronRight size={20} className="rotate-90" />
-                </button>
-              </div>
-              <button
-                onClick={() => setSelectedImg(null)}
-                className="w-12 h-12 rounded-full bg-white/10 hover:bg-red-500/80 flex items-center justify-center transition-colors backdrop-blur-md border border-white/10"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-210 bg-black/50 px-6 py-2 rounded-full border border-white/10 text-[10px] uppercase tracking-[0.3em] font-bold">
-              {selectedImg.title} <span className="text-amber-500 ml-4">{currentZoomDisplay}%</span>
-            </div>
-
-            {/* Canvas de Imagen con Soporte Táctil de Alto Rendimiento */}
-            <div
-              className="relative w-full h-full flex items-center justify-center cursor-move"
-              onWheel={(e) => {
-                const delta = e.deltaY * -0.005;
-                const next = Math.min(Math.max(motionZoom.get() + delta, 0.5), 5);
-                motionZoom.set(next);
-                setCurrentZoomDisplay(Math.round(next * 100));
-              }}
-              onMouseDown={() => setIsDragging(true)}
-              onMouseUp={() => setIsDragging(false)}
-              onMouseLeave={() => setIsDragging(false)}
-              onMouseMove={(e) => {
-                if (!isDragging || motionZoom.get() <= 1.05) return;
-                motionPanX.set(motionPanX.get() + e.movementX);
-                motionPanY.set(motionPanY.get() + e.movementY);
-              }}
-              // Soporte para gestos móviles (Pinch & Pan) OPTIMIZADO
-              onTouchStart={(e) => {
-                setIsDragging(true);
-                if (e.touches.length === 2) {
-                  const dist = Math.hypot(
-                    e.touches[0].pageX - e.touches[1].pageX,
-                    e.touches[0].pageY - e.touches[1].pageY
-                  );
-                  (e.currentTarget as any)._lastDist = dist;
-                } else if (e.touches.length === 1) {
-                  (e.currentTarget as any)._lastTouch = { x: e.touches[0].pageX, y: e.touches[0].pageY };
-                }
-              }}
-              onTouchEnd={() => {
-                setIsDragging(false);
-                setCurrentZoomDisplay(Math.round(motionZoom.get() * 100));
-              }}
-              onTouchMove={(e) => {
-                if (e.touches.length === 2) {
-                  const dist = Math.hypot(
-                    e.touches[0].pageX - e.touches[1].pageX,
-                    e.touches[0].pageY - e.touches[1].pageY
-                  );
-                  const lastDist = (e.currentTarget as any)._lastDist || dist;
-                  const delta = (dist - lastDist) * 0.01;
-                  motionZoom.set(Math.min(Math.max(motionZoom.get() + delta, 0.5), 5));
-                  (e.currentTarget as any)._lastDist = dist;
-                } else if (e.touches.length === 1 && motionZoom.get() > 1.05) {
-                  const touch = { x: e.touches[0].pageX, y: e.touches[0].pageY };
-                  const lastTouch = (e.currentTarget as any)._lastTouch || touch;
-                  motionPanX.set(motionPanX.get() + (touch.x - lastTouch.x));
-                  motionPanY.set(motionPanY.get() + (touch.y - lastTouch.y));
-                  (e.currentTarget as any)._lastTouch = touch;
-                }
-              }}
-            >
-              <motion.div
-                style={{
-                  scale: motionZoom,
-                  x: motionPanX,
-                  y: motionPanY,
-                  willChange: 'transform'
-                }}
-                className="relative pointer-events-none"
-              >
-                <img
-                  src={selectedImg.src}
-                  alt={selectedImg.title}
-                  className="max-h-[70vh] sm:max-h-[85vh] w-auto rounded-lg shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/5"
-                />
-              </motion.div>
-            </div>
-
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-zinc-500 text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.4em] pointer-events-none text-center px-6">
-              <span className="sm:hidden">Pellizca para zoom y arrastra para explorar</span>
-              <span className="hidden sm:inline">Usa el scroll y arrastra para explorar el detalle</span>
-            </div>
-          </motion.div>
+          <Lightbox selectedImg={selectedImg} setSelectedImg={setSelectedImg} />
         )}
       </AnimatePresence>
     </div>
