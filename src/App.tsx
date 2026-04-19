@@ -484,8 +484,7 @@ export default function App() {
                 ))}
               </div>
             </motion.section>
-              </motion.section>
-            )}
+          )}
 
             {section === 'catalogue' && (
               <motion.section className="max-w-6xl mx-auto">
