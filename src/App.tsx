@@ -372,18 +372,36 @@ export default function App() {
             >
               <div className="text-center mb-10 sm:mb-16">
                 <h2 className="text-4xl sm:text-6xl font-black tracking-tighter uppercase mb-4">Catálogo de <span className="text-gradient">Trabajos</span></h2>
-                <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mt-6">
-                  {['HOMBRE', 'MUJER'].map(cat => (
-                    <button
-                      key={cat}
-                      onClick={() => setCatFilter(cat)}
+                <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-8">
+                  {[
+                    { id: 'HOMBRE', icon: <User size={16} /> },
+                    { id: 'MUJER', icon: <User size={16} /> }
+                  ].map(cat => (
+                    <motion.button
+                      key={cat.id}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setCatFilter(cat.id)}
                       className={cn(
-                        "px-6 sm:px-10 py-3 rounded-full text-[10px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] transition-all border",
-                        catFilter === cat ? "bg-amber-500 border-amber-500 text-black px-10 sm:px-14" : "border-white/5 text-zinc-500 hover:border-white/20"
+                        "relative px-8 sm:px-12 py-4 rounded-full text-[10px] sm:text-xs font-black tracking-[0.3em] transition-all border flex items-center gap-3 overflow-hidden",
+                        catFilter === cat.id 
+                          ? "bg-amber-500 border-amber-500 text-black shadow-[0_0_25px_rgba(245,158,11,0.5)]" 
+                          : "border-white/10 text-zinc-500 hover:border-amber-500/50 hover:text-white"
                       )}
                     >
-                      {cat}
-                    </button>
+                      <span className={cn(catFilter === cat.id ? "text-black" : "text-amber-500/50")}>
+                        {cat.icon}
+                      </span>
+                      {cat.id}
+                      {catFilter === cat.id && (
+                        <motion.div 
+                          layoutId="activeGlow"
+                          className="absolute inset-0 bg-white/20 blur-xl px-4"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                        />
+                      )}
+                    </motion.button>
                   ))}
                 </div>
               </div>
