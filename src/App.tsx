@@ -415,10 +415,12 @@ export default function App() {
                   <div className="relative group mx-auto max-w-md lg:max-w-none">
                     <div className="absolute inset-0 bg-amber-500/10 blur-[100px] rounded-full group-hover:bg-amber-500/20 transition-all duration-1000" />
                     <img
-                      src="/assets/producto/mujer/brazo_leon.png?v=studio"
+                      src="/assets/producto/mujer/brazo_leon.png"
                       id="hero-main-image"
                       alt="Inkora Studio Hero"
                       className="relative w-full aspect-4/5 object-cover rounded-[3rem] grayscale hover:grayscale-0 transition-all duration-1000 border border-white/5 shadow-2xl"
+                      loading="eager"
+                      decoding="sync"
                     />
                   </div>
               </div>
@@ -487,7 +489,13 @@ export default function App() {
                       className="relative aspect-4/5 rounded-4xl overflow-hidden group border border-white/5 cursor-zoom-in"
                     >
                       <div className="absolute inset-0 bg-linear-to-tr from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10" />
-                      <img src={`${img.src}?v=gallery`} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0" alt={img.title} />
+                      <img 
+                        src={img.src} 
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0" 
+                        alt={img.title} 
+                        loading="lazy"
+                        decoding="async"
+                      />
                       <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-linear-to-r from-transparent via-white/10 to-transparent pointer-events-none z-20" />
                       <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-8 z-30">
                         <div>
