@@ -360,7 +360,10 @@ export default function App() {
       {/* Header Space for Nav */}
       <div className="h-28 sm:h-10" />
 
-      <main className="relative z-10 px-6 pt-10 sm:pt-40 pb-32">
+      <main className={cn(
+        "relative z-10 px-6 pb-32 transition-all duration-500",
+        section === 'home' ? "pt-64 sm:pt-40" : "pt-24 sm:pt-40"
+      )}>
         <AnimatePresence mode="wait">
           <motion.div
             key={section}
