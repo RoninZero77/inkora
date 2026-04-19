@@ -358,7 +358,7 @@ export default function App() {
       </div>
 
       {/* Navigation - Responsive Adaptada (Prioridad Absoluta) */}
-      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] sm:w-auto sm:min-w-[400px] z-[999] px-6 sm:px-10 py-3 flex justify-center items-center backdrop-blur-xl bg-zinc-200/90 border border-zinc-300 shadow-2xl rounded-full">
+      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] sm:w-auto sm:min-w-[400px] z-999 px-6 sm:px-10 py-3 flex justify-center items-center backdrop-blur-xl bg-zinc-200/90 border border-zinc-300 shadow-2xl rounded-full">
         <div className="flex gap-4 sm:gap-10 text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-black">
           <button onClick={() => setSection('home')} className="hover:opacity-60 transition-opacity">Studio</button>
           <button onClick={() => setSection('catalogue')} className="hover:opacity-60 transition-opacity">Catálogo</button>
