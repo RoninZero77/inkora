@@ -365,8 +365,11 @@ export default function App() {
       {/* Header Space for Nav */}
       <div className="h-28 sm:h-10" />
 
-      {/* Mobile Logo - MAX IMPACT (Mobile only) */}
-      <div className="sm:hidden flex justify-center mb-10 relative z-10 px-6">
+      {/* Mobile Logo - Dynamic Impact (Reserva Fix) */}
+      <div className={cn(
+        "sm:hidden flex justify-center relative z-20 px-6 transition-all duration-500",
+        section === 'home' ? "h-48 mb-6 mt-16" : "h-24 mb-2 mt-16"
+      )}>
         <motion.button 
           onClick={() => setSection('home')} 
           initial={{ opacity: 0, scale: 0.8 }}
@@ -375,29 +378,29 @@ export default function App() {
           <img
             src="/assets/logo.png"
             alt="INKORA"
-            className="h-44 w-auto object-contain brightness-200 contrast-150 saturate-150"
+            className="h-full w-auto object-contain brightness-200 contrast-150 saturate-150 transition-all duration-500"
             style={{ 
-              filter: 'drop-shadow(0 0 20px rgba(255,255,0,0.9)) drop-shadow(0 0 45px rgba(255,255,0,0.4))' 
+                filter: 'drop-shadow(0 0 15px rgba(255,255,0,0.9))' 
             }}
             loading="eager"
           />
         </motion.button>
       </div>
 
-      <main className="relative z-10 px-6 pt-10 sm:pt-40 pb-32">
+      <main className="relative z-10 px-6 pb-32">
         <AnimatePresence mode="wait">
-          {section === 'home' ? (
+          {section === 'home' && (
             <motion.section
               key="home"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              exit={{ opacity: 0, y: -10 }}
               className="max-w-6xl mx-auto"
             >
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
                 <div className="space-y-10 text-center lg:text-left">
                   <motion.h1 
-                    className="text-5xl sm:text-7xl lg:text-9xl font-black tracking-tighter leading-[0.9] text-center lg:text-left"
+                    className="text-5xl sm:text-7xl lg:text-9xl font-black tracking-tighter leading-[0.9]"
                   >
                     {["ARTE", "SIN", "LÍMITES"].map((word, i) => (
                       <span key={i} className="block overflow-hidden h-fit">
@@ -456,12 +459,14 @@ export default function App() {
                 ))}
               </div>
             </motion.section>
-          ) : section === 'catalogue' ? (
+          )}
+
+          {section === 'catalogue' && (
             <motion.section
               key="catalogue"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.02 }}
               className="max-w-6xl mx-auto"
             >
               <div className="text-center mb-10 sm:mb-16">
@@ -528,13 +533,15 @@ export default function App() {
                 </button>
               </div>
             </motion.section>
-          ) : (
+          )}
+
+          {section === 'booking' && (
             <motion.section
               key="booking"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.05 }}
-              className="max-w-2xl mx-auto"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              className="max-w-4xl mx-auto relative z-20"
             >
               {!success ? (
                 <div className="bg-zinc-900 border border-white/10 p-6 sm:p-12 rounded-4xl sm:rounded-[3rem] backdrop-blur-3xl shadow-2xl">
