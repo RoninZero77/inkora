@@ -242,11 +242,14 @@ export default function App() {
       </div>
 
       {/* Navigation - Responsive Adaptada */}
-      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] sm:w-auto sm:min-w-[400px] z-100 px-6 sm:px-10 py-3 flex justify-center items-center backdrop-blur-xl bg-zinc-200/90 border border-zinc-300 shadow-2xl rounded-full">
-        <div className="flex gap-4 sm:gap-10 text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-black">
+      <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-100 flex items-center bg-black/40 backdrop-blur-2xl border border-white/5 px-8 py-4 rounded-full gap-8 text-[10px] uppercase tracking-[0.3em] font-black">
+        <div className="flex items-center gap-6 pr-6 border-r border-white/5">
           <button onClick={() => setSection('home')} className="hover:opacity-60 transition-opacity">Studio</button>
           <button onClick={() => setSection('catalogue')} className="hover:opacity-60 transition-opacity">Catálogo</button>
           <button onClick={() => setSection('booking')} className="hover:opacity-60 transition-opacity">Reserva</button>
+        </div>
+        <div className="flex items-center gap-4 pl-6 text-zinc-500">
+          <a href="#" className="hover:text-white transition-colors"><Instagram size={16} /></a>
           <button onClick={() => setShowAdmin(true)} className="hover:text-amber-600 transition-all flex items-center gap-2">
             <Database size={14} /> <span className="hidden xs:inline">Gestión</span>
           </button>
@@ -271,7 +274,21 @@ export default function App() {
       {/* Header Space for Nav */}
       <div className="h-28 sm:h-10" />
 
-            }}
+      {/* Mobile Logo - Dynamic size (Fixed Syntax) */}
+      <div className={cn(
+        "sm:hidden flex justify-center relative z-10 px-6 transition-all duration-500",
+        section === 'home' ? "h-48 mb-10 mt-20" : "h-24 mb-4 mt-20"
+      )}>
+        <motion.button 
+          onClick={() => setSection('home')}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative inline-block"
+        >
+          <img
+            src="/assets/logo.png"
+            alt="INKORA"
+            className="h-full object-contain filter brightness-150 contrast-125 drop-shadow-[0_0_15px_rgba(245,158,11,0.8)]"
             loading="eager"
           />
         </motion.button>
