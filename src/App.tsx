@@ -725,7 +725,7 @@ export default function App() {
       </footer>
 
       {/* REUBICACIÓN ESTRATÉGICA DE CONTROLES (TACTOR PRIORITY) */}
-      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] sm:w-auto sm:min-w-[400px] z-[9999] px-6 sm:px-10 py-3 flex justify-center items-center backdrop-blur-xl bg-zinc-200/90 border border-zinc-300 shadow-2xl rounded-full">
+      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] sm:w-auto sm:min-w-[400px] z-9999 px-6 sm:px-10 py-3 flex justify-center items-center backdrop-blur-xl bg-zinc-200/90 border border-zinc-300 shadow-2xl rounded-full">
         <div className="flex gap-4 sm:gap-10 text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-black">
           <button onClick={() => { setSection('home'); setSelectedImg(null); }} className="hover:opacity-60 transition-opacity">Studio</button>
           <button onClick={() => { setSection('catalogue'); setSelectedImg(null); }} className="hover:opacity-60 transition-opacity">Catálogo</button>
@@ -737,7 +737,7 @@ export default function App() {
       </nav>
 
       {/* Desktop Logo - Redundant Layer */}
-      <div className="hidden sm:block fixed top-4 left-6 z-[9998] group">
+      <div className="hidden sm:block fixed top-4 left-6 z-9998 group">
         <div className="absolute inset-0 bg-yellow-400/20 blur-[60px] rounded-full group-hover:bg-yellow-400/40 transition-all duration-1000" />
         <button onClick={() => { setSection('home'); setSelectedImg(null); }} className="relative hover:scale-110 transition-transform duration-500">
           <img src="/assets/logo.png" alt="INKORA" className="h-32 lg:h-56 w-auto brightness-150 contrast-125" style={{ filter: 'drop-shadow(0 0 15px rgba(255,255,0,0.8))' }} />
@@ -746,7 +746,7 @@ export default function App() {
 
       {/* Mobile Logo - Absolute Priority Layer */}
       <div className={cn(
-        "sm:hidden fixed top-24 left-0 w-full flex justify-center z-[9997] px-6 pointer-events-none transition-all duration-500",
+        "sm:hidden fixed top-24 left-0 w-full flex justify-center z-9997 px-6 pointer-events-none transition-all duration-500",
         section === 'home' ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-50 -translate-y-20"
       )}>
         <button 
