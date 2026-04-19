@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useMotionValue } from 'framer-motion';
 import {
   MessageSquare,
   Send,
@@ -56,12 +56,20 @@ export default function App() {
   const [adminAuth, setAdminAuth] = useState(false);
   const [pin, setPin] = useState('');
 
+  // Motion Values for Ultra-Performance (60FPS Zoom/Pan)
+  const motionZoom = useMotionValue(1);
+  const motionPanX = useMotionValue(0);
+  const motionPanY = useMotionValue(0);
+  const [currentZoomDisplay, setCurrentZoomDisplay] = useState(100);
+
   // Bloquear scroll y resetear estado
   useEffect(() => {
     if (selectedImg) {
       document.body.style.overflow = 'hidden';
-      setZoom(1);
-      setPan({ x: 0, y: 0 });
+      motionZoom.set(1);
+      motionPanX.set(0);
+      motionPanY.set(0);
+      setCurrentZoomDisplay(100);
     } else {
       document.body.style.overflow = 'unset';
       document.body.style.cursor = 'default';
@@ -645,7 +653,7 @@ export default function App() {
         </p>
       </footer>
 
-      {/* Lightbox - Edición Ultra-Táctil para Móviles */}
+      {/* Lightbox - Edición Ultra-Táctil OPTIMIZADA (60FPS) */}
       <AnimatePresence>
         {selectedImg && (
           <motion.div
@@ -661,13 +669,21 @@ export default function App() {
             <div className="absolute top-6 right-6 z-210 flex gap-4">
               <div className="hidden sm:flex gap-2">
                 <button
-                  onClick={() => setZoom(prev => Math.min(prev + 0.5, 5))}
+                  onClick={() => {
+                    const next = Math.min(motionZoom.get() + 0.5, 5);
+                    motionZoom.set(next);
+                    setCurrentZoomDisplay(Math.round(next * 100));
+                  }}
                   className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/5"
                 >
                   <ChevronRight size={20} className="-rotate-90" />
                 </button>
                 <button
-                  onClick={() => setZoom(prev => Math.max(prev - 0.5, 0.5))}
+                  onClick={() => {
+                    const next = Math.max(motionZoom.get() - 0.5, 0.5);
+                    motionZoom.set(next);
+                    setCurrentZoomDisplay(Math.round(next * 100));
+                  }}
                   className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/5"
                 >
                   <ChevronRight size={20} className="rotate-90" />
@@ -682,31 +698,30 @@ export default function App() {
             </div>
 
             <div className="absolute top-6 left-1/2 -translate-x-1/2 z-210 bg-black/50 px-6 py-2 rounded-full border border-white/10 text-[10px] uppercase tracking-[0.3em] font-bold">
-              {selectedImg.title} <span className="text-amber-500 ml-4">{Math.round(zoom * 100)}%</span>
+              {selectedImg.title} <span className="text-amber-500 ml-4">{currentZoomDisplay}%</span>
             </div>
 
-            {/* Canvas de Imagen con Soporte Táctil */}
+            {/* Canvas de Imagen con Soporte Táctil de Alto Rendimiento */}
             <div
               className="relative w-full h-full flex items-center justify-center cursor-move"
               onWheel={(e) => {
                 const delta = e.deltaY * -0.005;
-                setZoom(prev => Math.min(Math.max(prev + delta, 0.5), 5));
+                const next = Math.min(Math.max(motionZoom.get() + delta, 0.5), 5);
+                motionZoom.set(next);
+                setCurrentZoomDisplay(Math.round(next * 100));
               }}
               onMouseDown={() => setIsDragging(true)}
               onMouseUp={() => setIsDragging(false)}
               onMouseLeave={() => setIsDragging(false)}
               onMouseMove={(e) => {
-                if (!isDragging || zoom <= 1.05) return;
-                setPan(prev => ({
-                  x: prev.x + e.movementX,
-                  y: prev.y + e.movementY
-                }));
+                if (!isDragging || motionZoom.get() <= 1.05) return;
+                motionPanX.set(motionPanX.get() + e.movementX);
+                motionPanY.set(motionPanY.get() + e.movementY);
               }}
-              // Soporte para gestos móviles (Pinch & Pan)
+              // Soporte para gestos móviles (Pinch & Pan) OPTIMIZADO
               onTouchStart={(e) => {
                 setIsDragging(true);
                 if (e.touches.length === 2) {
-                  // Iniciando pinch-to-zoom
                   const dist = Math.hypot(
                     e.touches[0].pageX - e.touches[1].pageX,
                     e.touches[0].pageY - e.touches[1].pageY
@@ -718,6 +733,7 @@ export default function App() {
               }}
               onTouchEnd={() => {
                 setIsDragging(false);
+                setCurrentZoomDisplay(Math.round(motionZoom.get() * 100));
               }}
               onTouchMove={(e) => {
                 if (e.touches.length === 2) {
@@ -727,26 +743,24 @@ export default function App() {
                   );
                   const lastDist = (e.currentTarget as any)._lastDist || dist;
                   const delta = (dist - lastDist) * 0.01;
-                  setZoom(prev => Math.min(Math.max(prev + delta, 0.5), 5));
+                  motionZoom.set(Math.min(Math.max(motionZoom.get() + delta, 0.5), 5));
                   (e.currentTarget as any)._lastDist = dist;
-                } else if (e.touches.length === 1 && zoom > 1.05) {
+                } else if (e.touches.length === 1 && motionZoom.get() > 1.05) {
                   const touch = { x: e.touches[0].pageX, y: e.touches[0].pageY };
                   const lastTouch = (e.currentTarget as any)._lastTouch || touch;
-                  setPan(prev => ({
-                    x: prev.x + (touch.x - lastTouch.x),
-                    y: prev.y + (touch.y - lastTouch.y)
-                  }));
+                  motionPanX.set(motionPanX.get() + (touch.x - lastTouch.x));
+                  motionPanY.set(motionPanY.get() + (touch.y - lastTouch.y));
                   (e.currentTarget as any)._lastTouch = touch;
                 }
               }}
             >
               <motion.div
-                animate={{
-                  scale: zoom,
-                  x: pan.x,
-                  y: pan.y
+                style={{
+                  scale: motionZoom,
+                  x: motionPanX,
+                  y: motionPanY,
+                  willChange: 'transform'
                 }}
-                transition={isDragging ? { type: 'just' } : { type: 'spring', stiffness: 300, damping: 30 }}
                 className="relative pointer-events-none"
               >
                 <img
