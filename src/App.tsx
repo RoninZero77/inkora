@@ -360,9 +360,9 @@ export default function App() {
       {/* Navigation - Responsive Adaptada (Prioridad Absoluta) */}
       <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] sm:w-auto sm:min-w-[400px] z-999 px-6 sm:px-10 py-3 flex justify-center items-center backdrop-blur-xl bg-zinc-200/90 border border-zinc-300 shadow-2xl rounded-full">
         <div className="flex gap-4 sm:gap-10 text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-black">
-          <button onClick={() => setSection('home')} className="hover:opacity-60 transition-opacity">Studio</button>
-          <button onClick={() => setSection('catalogue')} className="hover:opacity-60 transition-opacity">Catálogo</button>
-          <button onClick={() => setSection('booking')} className="hover:opacity-60 transition-opacity">Reserva</button>
+          <button onClick={() => { setSection('home'); setSelectedImg(null); }} className="hover:opacity-60 transition-opacity">Studio</button>
+          <button onClick={() => { setSection('catalogue'); setSelectedImg(null); }} className="hover:opacity-60 transition-opacity">Catálogo</button>
+          <button onClick={() => { setSection('booking'); setSelectedImg(null); }} className="hover:opacity-60 transition-opacity">Reserva</button>
           <button onClick={() => setShowAdmin(true)} className="hover:text-amber-600 transition-all flex items-center gap-2">
             <Database size={14} /> <span className="hidden xs:inline">Gestión</span>
           </button>
@@ -372,7 +372,7 @@ export default function App() {
       {/* Desktop Logo (Fixed Corner) - MAX IMPACT */}
       <div className="hidden sm:block fixed top-4 left-6 z-100 group">
         <div className="absolute inset-0 bg-yellow-400/20 blur-[60px] rounded-full group-hover:bg-yellow-400/40 transition-all duration-1000" />
-        <button onClick={() => setSection('home')} className="relative hover:scale-110 transition-transform duration-500">
+        <button onClick={() => { setSection('home'); setSelectedImg(null); }} className="relative hover:scale-110 transition-transform duration-500">
           <img
             src="/assets/logo.png"
             alt="INKORA"
@@ -387,13 +387,13 @@ export default function App() {
       {/* Header Space for Nav */}
       <div className="h-28 sm:h-10" />
 
-      {/* Mobile Logo - Dynamic Impact (Reserva Fix) */}
+      {/* Mobile Logo - Dynamic Impact (Original Design Preserved) */}
       <div className={cn(
         "sm:hidden flex justify-center relative z-20 px-6 transition-all duration-500",
         section === 'home' ? "h-48 mb-6 mt-16" : "h-24 mb-2 mt-16"
       )}>
         <motion.button 
-          onClick={() => setSection('home')} 
+          onClick={() => { setSection('home'); setSelectedImg(null); }} 
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
         >
@@ -410,7 +410,7 @@ export default function App() {
       </div>
 
       <main className="relative z-10 px-6 pt-10 sm:pt-40 pb-32">
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {section === 'home' && (
             <motion.section
               key="home"
