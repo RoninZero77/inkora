@@ -393,7 +393,7 @@ export default function App() {
         </motion.button>
       </div>
 
-      <main className="relative z-10 px-6 pb-32">
+      <main className="relative z-10 px-6 pt-10 sm:pt-40 pb-32">
         <AnimatePresence mode="wait">
           {section === 'home' && (
             <motion.section
