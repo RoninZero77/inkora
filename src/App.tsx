@@ -375,9 +375,9 @@ export default function App() {
           <img
             src="/assets/logo.png"
             alt="INKORA"
-            className="h-44 w-auto object-contain brightness-150 contrast-125"
+            className="h-44 w-auto object-contain brightness-200 contrast-150 saturate-150"
             style={{ 
-              filter: 'drop-shadow(0 0 15px rgba(245,158,11,0.8)) drop-shadow(0 0 35px rgba(245,158,11,0.5))' 
+              filter: 'drop-shadow(0 0 20px rgba(255,255,0,0.9)) drop-shadow(0 0 45px rgba(255,255,0,0.4))' 
             }}
             loading="eager"
           />
